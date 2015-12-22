@@ -2,28 +2,27 @@ import {Component} from 'react';
 import Notes from './Notes';
 import uuid from 'node-uuid';
 import {Button,Glyph} from 'elemental';
+import NoteStore from '../store/NoteStore';
+import NoteActions from '../actions/NoteActions';
 
 
 export default class App extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = {
-            notes: [
-                {
-                    id: uuid.v4(),
-                    task: 'Learn Webpack'
-                },
-                {
-                    id: uuid.v4(),
-                    task: 'Learn React'
-                },
-                {
-                    id: uuid.v4(),
-                    task: 'Do laundry'
-                }
-            ]
-        };
+       this.state = NoteStore.getState();
+    }
+    componentDidMount(){
+        NoteStore.listen(this.storeChanged);
+    }
+    componentWillUnmount(){
+        NoteStore.unlisten(this.storeChanged);
+    }
+
+    storeChanged = (state) => {
+        // Without a property initializer `this` wouldn't
+        // point at the right context (defaults to `window`).
+        this.setState(state);
     }
 
     render() {
@@ -38,52 +37,16 @@ export default class App extends React.Component {
         );
     }
 
-    deleteNote = (id) => {
-        const notes = this.state.notes;
-
-        const noteIndex = this.findNote(id);
-
-        if(noteIndex <0){
-            return;
-        }
-
-        this.setState({
-            notes: notes.slice(0, noteIndex).concat(notes.slice(noteIndex + 1))
-        });
-
+    addNote(){
+        NoteActions.create({task: 'New task'});
     }
 
-    addNote = () => {
-        this.setState({
-            notes: this.state.notes.concat([{
-                id: uuid.v4(),
-                task: 'New task'
-            }])
-        });
+    editNote(id,task){
+        NoteActions.update({id,task});
     }
 
-    editNote = (id, task) => {
-       const notes = this.state.notes;
-       const noteIndex = this.findNote(id);
-
-        if(noteIndex < 0){
-            return;
-        }
-
-        notes[noteIndex].task = task;
-
-        this.setState({notes});
-    }
-
-    findNote = (id) => {
-        const notes = this.state.notes;
-        const noteIndex = notes.findIndex((note) => note.id === id);
-
-        if(noteIndex < 0){
-            console.warn('Failed to find note', notes, id);
-        }
-
-        return noteIndex;
+    deleteNote(id){
+        NoteActions.delete(id);
     }
 
 }
