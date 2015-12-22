@@ -48,6 +48,10 @@ localstorage@1.0.5
 logging@1.0.8
 meteor@1.1.10
 meteor-base@1.0.1
+meteorflux:meteorflux@1.1.2
+meteorflux:meteorflux-debug@1.0.0
+meteorflux:namespace@1.0.0
+meteorflux:reactive-state@1.2.0
 meteorhacks:fast-render@2.9.0
 meteorhacks:inject-data@1.4.1
 meteorhacks:picker@1.0.3
